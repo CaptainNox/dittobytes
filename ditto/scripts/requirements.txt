@@ -8,7 +8,7 @@
 # its terms. However, any modified versions of this file must 
 # include this same license and copyright notice.
 
-lief==0.16.6
+lief==0.17.2
 levenshtein==0.27.1
 binary2strings==0.1.13
 capstone==5.0.6
