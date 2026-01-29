@@ -140,7 +140,7 @@ The pre-shippped minimal C-code file (`./code/beacon.c`) can cross-compile to al
 
 ### Presentation
 
-This research has been presented at OrangeCon 2025. [The slides](https://github.com/tijme/dittobytes/blob/master/.github/presentation/In%20Memory%20of%20In-Memory%20Detection.pdf) are available and a recording will be published soon.
+This research has been presented at OrangeCon 2025. [The slides](https://github.com/tijme/dittobytes/blob/master/.github/presentation/In%20Memory%20of%20In-Memory%20Detection.pdf) are available on GitHub and a [recording](https://www.youtube.com/watch?v=9tCT2ItbPD4) can be found on YouTube.
 
 ### Overview
 
