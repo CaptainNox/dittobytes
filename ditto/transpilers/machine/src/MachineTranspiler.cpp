@@ -3,10 +3,10 @@
  *
  * Copyright (c) 2025 Tijme Gommers (@tijme).
  *
- * This source code file is part of Dittobytes. Dittobytes is 
- * licensed under GNU General Public License, version 2.0, and 
- * you are free to use, modify, and distribute this file under 
- * its terms. However, any modified versions of this file must 
+ * This source code file is part of Dittobytes. Dittobytes is
+ * licensed under GNU General Public License, version 2.0, and
+ * you are free to use, modify, and distribute this file under
+ * its terms. However, any modified versions of this file must
  * include this same license and copyright notice.
  */
 
@@ -38,6 +38,7 @@
 #include "modules/transform_nullifications/TransformNullificationsModule.cpp"
 #include "modules/transform_reg_mov_immediates/TransformRegMovImmediatesModule.cpp"
 #include "modules/transform_stack_mov_immediates/TransformStackMovImmediatesModule.cpp"
+#include "modules/transform_reg_mov/TransformRegMovModule.cpp"
 
 /**
  * Namespace(s) to use
@@ -48,7 +49,7 @@ using namespace llvm;
  * LLVM function pass that calls specific modules of each function it visits.
  *
  * MachineTranspiler is a custom LLVM pass derived from MachineFunctionPass.
- * It operates at the machine function level. This pass currently performs 
+ * It operates at the machine function level. This pass currently performs
  * no transformation on its own, but calls several modules that do so.
  */
 class MachineTranspiler : public MachineFunctionPass {
@@ -71,7 +72,7 @@ private:
 
     /**
      * Retrieve a state of where we currently are in the pass pipeline.
-     * 
+     *
      * @returns MachineTranspilerStep Where in the pass pipeline we currently are.
      */
     MachineTranspilerStep getMachineTranspilerStep() {
@@ -95,7 +96,7 @@ public:
 
     /**
      * Constructor for the MachineTranspiler pass.
-     * 
+     *
      * Initializes the pass with the unique ID.
      */
     MachineTranspiler() : MachineFunctionPass(ID) {
@@ -104,10 +105,10 @@ public:
 
     /**
      * Retrieves the name of the pass.
-     * 
+     *
      * This function returns the pass name, used for identification when running
      * the pass through LLVM's pass manager.
-     * 
+     *
      * @return StringRef The name of the pass.
      */
     StringRef getPassName() const override {
@@ -119,7 +120,7 @@ public:
      *
      * This function is called by LLVM when the pass is run on a machine function.
      * It iterates through the machine basic blocks and checks each machine instruction.
-     * 
+     *
      * @param MachineFunction& MF The machine function to run the pass on.
      * @return bool Indicates if the machine function was modified.
      */
@@ -140,8 +141,10 @@ public:
                 // modified = InsertSemanticNoiseModule().runOnMachineFunction(MF) || modified;
                 // Module: Replace `xor reg, reg` instructions
                 modified = TransformNullificationsModule().runOnMachineFunction(MF) || modified;
+                // Module: Modify `mov reg1, reg2`
+                modified = TransformRegMovModule().runOnMachineFunction(MF) || modified;
                 break;
-            case UnknownStep:        
+            case UnknownStep:
                 dbgs() << "        ↳ Unknown step `" << step << "`.\n";
                 break;
         }
@@ -158,6 +161,6 @@ public:
  */
 char MachineTranspiler::ID = 0;
 static llvm::RegisterPass<MachineTranspiler> MachineTranspilerRegistration(
-    "MachineTranspiler", 
+    "MachineTranspiler",
     "The Dittobytes MachineFunctionPass Transpiler!"
 );

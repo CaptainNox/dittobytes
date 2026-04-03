@@ -300,3 +300,4 @@ deps/
 .clangd
 compile_commands.json
 .zed/
+ditto/transpilers/intermediate/build

@@ -136,7 +136,7 @@ public:
                 dbgs() << "          ✓ Modified immediate value using random option `ADD`.\n";
             }
         }
-        
+
         return modified;
     }
 
@@ -144,11 +144,11 @@ private:
 
     /**
      * Determines the size of the immediate value for a given machine instruction.
-     * 
+     *
      * This function checks the opcode of the provided `MachineInstr` and returns the size
      * of the immediate value associated with the instruction. The size is returned in bits
      * (e.g., 8, 16, 32, or 64 bits) based on the instruction type.
-     * 
+     *
      * If the opcode does not match any known MOV instruction types, a fatal error is reported.
      *
      * @param MachineFunction& MF instruction The `MachineInstr` whose opcode will be checked to determine the immediate size.
@@ -167,7 +167,7 @@ private:
             case X86::MOV32ri:
                 return 32;
                 break;
-            case X86::MOV64ri:            
+            case X86::MOV64ri:
             case X86::MOV64ri32:
                 return 64;
                 break;
@@ -179,11 +179,11 @@ private:
 
     /**
      * Determines the ADD replacement opcode for a given MOV instruction opcode.
-     * 
+     *
      * This function maps certain MOV instruction opcodes to corresponding ADD opcodes
      * for AMD64 instructions. The provided `MachineInstr`'s opcode is checked and
      * replaced with an appropriate ADD opcode based on the MOV instruction's immediate size.
-     * 
+     *
      * If the opcode does not match any known MOV instruction types, a fatal error is reported.
      *
      * @param MachineFunction& MF instruction The `MachineInstr` whose opcode will be checked and replaced with the corresponding ADD opcode.
@@ -206,7 +206,7 @@ private:
 
     /**
      * Checks if the given instruction is a MOV instruction with an immediate operand.
-     * 
+     *
      * @param MachineFunction& MF instruction The `MachineInstr` whose opcode will be checked to determine if it's a MOV with an immediate operand.
      * @return bool Returns `true` if the instruction is a MOV immediate instruction, otherwise `false`.
      */

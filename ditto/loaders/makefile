@@ -4,10 +4,10 @@
 #
 # Copyright (c) 2025 Tijme Gommers (@tijme).
 #
-# This source code file is part of Dittobytes. Dittobytes is 
-# licensed under GNU General Public License, version 2.0, and 
-# you are free to use, modify, and distribute this file under 
-# its terms. However, any modified versions of this file must 
+# This source code file is part of Dittobytes. Dittobytes is
+# licensed under GNU General Public License, version 2.0, and
+# you are free to use, modify, and distribute this file under
+# its terms. However, any modified versions of this file must
 # include this same license and copyright notice.
 
 ##########################################
@@ -16,8 +16,8 @@
 
 BUILD_DIR              := ../../build
 PYTHON_PATH            := /usr/bin/python3
-LLVM_DIR_WIN           := /opt/llvm-winlin/bin
-LLVM_DIR_LIN           := /opt/llvm-winlin/bin
+LLVM_DIR_WIN           := ../../deps/llvm-winlin/bin
+LLVM_DIR_LIN           := ../../deps/llvm-winlin/bin
 LLVM_DIR_MAC           := /usr/bin
 
 WIN_AMD64_LOADER_NAME  := loader-win-amd64
@@ -134,7 +134,7 @@ $(LIN_ARM64_LOADER_NAME): $(LIN_ARM64_LOADER_PATH)
 MAC_AMD64_TARGET         := x86_64-apple-darwin
 MAC_AMD64_DEFINES        := -D__MACOS__ -D__AMD64__
 MAC_AMD64_LOADER_PATH    := $(BUILD_DIR)/$(MAC_AMD64_LOADER_NAME)
-MAC_AMD64_LOADER_FLAGS   := -target $(MAC_AMD64_TARGET) $(MAC_AMD64_DEFINES) -fuse-ld=lld -isysroot/opt/macos-sdk/MacOSX15.4.sdk/ -I/opt/macos-sdk/MacOSX15.4.sdk/usr/include -L/opt/macos-sdk/MacOSX15.4.sdk/usr/lib
+MAC_AMD64_LOADER_FLAGS   := -target $(MAC_AMD64_TARGET) $(MAC_AMD64_DEFINES) -fuse-ld=lld -isysroot../../deps/macos-sdk/MacOSX15.4.sdk/ -I../../deps/macos-sdk/MacOSX15.4.sdk/usr/include -L../../deps/macos-sdk/MacOSX15.4.sdk/usr/lib
 
 $(MAC_AMD64_LOADER_PATH): macos/src/main.c | $(BUILD_DIR)
 	@echo "[+] Compiling $(MAC_AMD64_LOADER_NAME)."
@@ -151,7 +151,7 @@ $(MAC_AMD64_LOADER_NAME): $(MAC_AMD64_LOADER_PATH)
 MAC_ARM64_TARGET         := arm64-apple-darwin
 MAC_ARM64_DEFINES        := -D__MACOS__ -D__ARM64__
 MAC_ARM64_LOADER_PATH    := $(BUILD_DIR)/$(MAC_ARM64_LOADER_NAME)
-MAC_ARM64_LOADER_FLAGS   := -target $(MAC_ARM64_TARGET) $(MAC_ARM64_DEFINES) -fuse-ld=lld -isysroot/opt/macos-sdk/MacOSX15.4.sdk/ -I/opt/macos-sdk/MacOSX15.4.sdk/usr/include -L/opt/macos-sdk/MacOSX15.4.sdk/usr/lib
+MAC_ARM64_LOADER_FLAGS   := -target $(MAC_ARM64_TARGET) $(MAC_ARM64_DEFINES) -fuse-ld=lld -isysroot../../deps/macos-sdk/MacOSX15.4.sdk/ -I../../deps/macos-sdk/MacOSX15.4.sdk/usr/include -L../../deps/macos-sdk/MacOSX15.4.sdk/usr/lib
 
 $(MAC_ARM64_LOADER_PATH): macos/src/main.c | $(BUILD_DIR)
 	@echo "[+] Compiling $(MAC_ARM64_LOADER_NAME)."

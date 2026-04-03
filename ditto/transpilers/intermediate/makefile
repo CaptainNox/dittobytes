@@ -4,10 +4,10 @@
 #
 # Copyright (c) 2025 Tijme Gommers (@tijme).
 #
-# This source code file is part of Dittobytes. Dittobytes is 
-# licensed under GNU General Public License, version 2.0, and 
-# you are free to use, modify, and distribute this file under 
-# its terms. However, any modified versions of this file must 
+# This source code file is part of Dittobytes. Dittobytes is
+# licensed under GNU General Public License, version 2.0, and
+# you are free to use, modify, and distribute this file under
+# its terms. However, any modified versions of this file must
 # include this same license and copyright notice.
 
 ##########################################
@@ -22,9 +22,9 @@ IS_COMPILER_CONTAINER  := $(shell if [ "$(IS_COMPILER_CONTAINER)" = "true" ] || 
 ##########################################
 
 all: check_environment $(BUILD_DIR)
-	@mkdir -p build 
-	@cd build && cmake ../src/
-	@cd build && cmake --build . -- -s
+	@mkdir -p build
+	@cd build && PATH=$(LLVM_DIR_CUSTOM):$(PATH) cmake ../src/
+	@cd build && PATH=$(LLVM_DIR_CUSTOM):$(PATH) cmake --build . -- -s
 	@mv build/libIntermediateTranspiler.so build/libIntermediateTranspiler-`arch`.so
 
 ##########################################
