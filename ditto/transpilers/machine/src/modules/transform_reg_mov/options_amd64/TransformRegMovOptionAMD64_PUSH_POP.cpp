@@ -54,6 +54,9 @@ public:
                 if (!Instruction.isMoveReg()) continue;
                 if (!modifyAll && !RandomHelper::getChanceOneIn(2)) continue;
 
+                dbgs() << "          ↳ Found AMD64 register move instruction!: ";
+                Instruction.print(dbgs());
+
                 Register srcReg = Instruction.getOperand(1).getReg();
                 Register dstReg = Instruction.getOperand(0).getReg();
 
