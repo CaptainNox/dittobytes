@@ -21,20 +21,20 @@ class TransformRegMovOptionAMD64_PUSH_POP {
 private:
     bool modified = false;
 
-    unsigned getPushOpcode(const unsigned &Size) {
-        switch (Size) {
-            case 2: return X86::PUSH16r;
-            case 4: return X86::PUSH32r;
-            case 8: return X86::PUSH64r;
+    unsigned getPushOpcode(const unsigned &SizeInBits) {
+        switch (SizeInBits) {
+            case 16: return X86::PUSH16r;
+            case 32: return X86::PUSH32r;
+            case 64: return X86::PUSH64r;
             default: return 0;
         }
     }
 
-    unsigned getPopOpcode(const unsigned &Size) {
-        switch (Size) {
-            case 2: return X86::POP16r;
-            case 4: return X86::POP32r;
-            case 8: return X86::POP64r;
+    unsigned getPopOpcode(const unsigned &SizeInBits) {
+        switch (SizeInBits) {
+            case 16: return X86::POP16r;
+            case 32: return X86::POP32r;
+            case 64: return X86::POP64r;
             default: return 0;
         }
     }
@@ -60,8 +60,8 @@ public:
                 // Determine the sizes of the registers
                 const TargetRegisterClass &srcRC = *TRI->getMinimalPhysRegClass(srcReg);
                 const TargetRegisterClass &dstRC = *TRI->getMinimalPhysRegClass(dstReg);
-                const unsigned srcRegSize = TRI->getRegSizeInBits(srcRC).getFixedValue() / 8;
-                const unsigned dstRegSize = TRI->getRegSizeInBits(dstRC).getFixedValue() / 8;
+                const unsigned srcRegSize = TRI->getRegSizeInBits(srcRC).getFixedValue();
+                const unsigned dstRegSize = TRI->getRegSizeInBits(dstRC).getFixedValue();
 
                 unsigned opPush = this->getPushOpcode(srcRegSize);
                 unsigned opPop = this->getPopOpcode(dstRegSize);

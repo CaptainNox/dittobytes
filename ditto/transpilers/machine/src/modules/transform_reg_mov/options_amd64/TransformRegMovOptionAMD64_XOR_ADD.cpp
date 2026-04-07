@@ -11,22 +11,22 @@ class TransformRegMovOptionAMD64_XOR_ADD {
 private:
     bool modified = false;
 
-    unsigned getXorOpcode (const unsigned &Size) {
-        switch (Size) {
-            case 1: return X86::XOR8rr;
-            case 2: return X86::XOR16rr;
-            case 4: return X86::XOR32rr;
-            case 8: return X86::XOR64rr;
+    unsigned getXorOpcode (const unsigned &SizeInBits) {
+        switch (SizeInBits) {
+            case 8: return X86::XOR8rr;
+            case 16: return X86::XOR16rr;
+            case 32: return X86::XOR32rr;
+            case 64: return X86::XOR64rr;
             default: return 0;
         }
     }
 
-    unsigned getAddOpcode(const unsigned &Size) {
-        switch(Size) {
-            case 1: return X86::ADD8rr;
-            case 2: return X86::ADD16rr;
-            case 4: return X86::ADD32rr;
-            case 8: return X86::ADD64rr;
+    unsigned getAddOpcode(const unsigned &SizeInBits) {
+        switch(SizeInBits) {
+            case 8: return X86::ADD8rr;
+            case 16: return X86::ADD16rr;
+            case 32: return X86::ADD32rr;
+            case 64: return X86::ADD64rr;
             default: return 0;
         }
     }
@@ -50,8 +50,8 @@ public:
                 // Determine the sizes of the registers
                 const TargetRegisterClass &srcRC = *TRI->getMinimalPhysRegClass(srcReg);
                 const TargetRegisterClass &dstRC = *TRI->getMinimalPhysRegClass(dstReg);
-                const unsigned srcRegSize = TRI->getRegSizeInBits(srcRC).getFixedValue() / 8;
-                const unsigned dstRegSize = TRI->getRegSizeInBits(dstRC).getFixedValue() / 8;
+                const unsigned srcRegSize = TRI->getRegSizeInBits(srcRC).getFixedValue();
+                const unsigned dstRegSize = TRI->getRegSizeInBits(dstRC).getFixedValue();
 
                 unsigned xorOp = this->getXorOpcode(srcRegSize);
                 unsigned addOp = this->getAddOpcode(dstRegSize);
