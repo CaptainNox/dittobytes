@@ -1,52 +1,42 @@
 
-/*
- * LLVM includes
- */
-
 #include "llvm/CodeGen/MachineFunction.h"
 #include "llvm/CodeGen/TargetSubtargetInfo.h"
 #include "llvm/CodeGen/TargetInstrInfo.h"
-#include "llvm/Support/Debug.h"
-#include "llvm/Target/X86/X86.h"
-#include "llvm/Target/X86/X86InstrInfo.h"
-#include "llvm/Target/X86/X86TargetMachine.h"
-#include "llvm/Support/Alignment.h"
-#include "llvm/CodeGen/MachineInstrBuilder.h"
 
 #include "../../../../../shared/helpers/RandomHelper.cpp"
 
 using namespace llvm;
 
-class TransformRegMovOptionAMD64_PUSH_POP {
+class TransformRegMovOptionAMD64_XOR_ADD {
 private:
     bool modified = false;
 
-    unsigned getPushOpcode(const unsigned &Size) {
+    unsigned getXorOpcode (const unsigned &Size) {
         switch (Size) {
-            case 2: return X86::PUSH16r;
-            case 4: return X86::PUSH32r;
-            case 8: return X86::PUSH64r;
+            case 1: return X86::XOR8rr;
+            case 2: return X86::XOR16rr;
+            case 4: return X86::XOR32rr;
+            case 8: return X86::XOR64rr;
             default: return 0;
         }
     }
 
-    unsigned getPopOpcode(const unsigned &Size) {
-        switch (Size) {
-            case 2: return X86::POP16r;
-            case 4: return X86::POP32r;
-            case 8: return X86::POP64r;
+    unsigned getAddOpcode(const unsigned &Size) {
+        switch(Size) {
+            case 1: return X86::ADD8rr;
+            case 2: return X86::ADD16rr;
+            case 4: return X86::ADD32rr;
+            case 8: return X86::ADD64rr;
             default: return 0;
         }
     }
 
 public:
-
     bool runOnMachineFunction(MachineFunction &MF, bool modifyAll) {
         const TargetInstrInfo *TII = MF.getSubtarget().getInstrInfo();
         const TargetRegisterInfo *TRI = MF.getSubtarget().getRegisterInfo();
 
-        dbgs() << "        ↳ Running AMD64 module: TransformRegMov(option=PUSH_POP,modifyAll=" << modifyAll << ").\n";
-
+        dbgs() << "        ↳ Running AMD64 module: TransformRegMov(option=XOR_ADD,modifyAll=" << modifyAll << ").\n";
 
         for (auto &MachineBasicBlock : MF) {
             for ( auto MachineInstruction = MachineBasicBlock.begin(); MachineInstruction != MachineBasicBlock.end(); ) {
@@ -63,21 +53,26 @@ public:
                 const unsigned srcRegSize = TRI->getRegSizeInBits(srcRC).getFixedValue() / 8;
                 const unsigned dstRegSize = TRI->getRegSizeInBits(dstRC).getFixedValue() / 8;
 
-                unsigned opPush = this->getPushOpcode(srcRegSize);
-                unsigned opPop = this->getPopOpcode(dstRegSize);
-                if (opPush == 0 || opPop == 0) continue;
+                unsigned xorOp = this->getXorOpcode(srcRegSize);
+                unsigned addOp = this->getAddOpcode(dstRegSize);
 
                 const DebugLoc &debugLoc = Instruction.getDebugLoc();
-                BuildMI(MachineBasicBlock, Instruction, debugLoc, TII->get(opPush)).addReg(srcReg);
-                BuildMI(MachineBasicBlock, Instruction, debugLoc, TII->get(opPop)).addReg(dstReg, RegState::Define);
+                BuildMI(MachineBasicBlock, Instruction, debugLoc, TII->get(xorOp), dstReg)
+                    .addReg(dstReg, RegState::Undef)
+                    .addReg(dstReg, RegState::Undef);
+
+                BuildMI(MachineBasicBlock, Instruction, debugLoc, TII->get(addOp), dstReg)
+                    .addReg(dstReg)
+                    .addReg(srcReg);
 
                 Instruction.eraseFromParent();
 
-                dbgs() << "          ✓ Modified register mov operation with random option `PUSH_POP`.\n";
+                dbgs() << "          ✓ Modified register mov operation with random option `XOR_ADD`.\n";
                 this->modified = true;
             }
         }
 
         return this->modified;
     }
+
 };

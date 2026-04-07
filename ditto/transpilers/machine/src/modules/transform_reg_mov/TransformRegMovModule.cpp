@@ -27,6 +27,7 @@
  * Modify `mov reg1, reg2` substitution options
  */
 #include "options_amd64/TransformRegMovOptionAMD64_PUSH_POP.cpp"
+#include "options_amd64/TransformRegMovOptionAMD64_XOR_ADD.cpp"
 
 using namespace llvm;
 
@@ -59,7 +60,8 @@ public:
     */
     TransformRegMovModule() {
         options_amd64 = {
-            [&](MachineFunction &MF, bool modifyAll) { return TransformRegMovOptionAMD64_PUSH_POP().runOnMachineFunction(MF, false); }
+            [&](MachineFunction &MF, bool modifyAll) { return TransformRegMovOptionAMD64_PUSH_POP().runOnMachineFunction(MF, false); },
+            [&](MachineFunction &MF, bool modifyAll) { return TransformRegMovOptionAMD64_XOR_ADD().runOnMachineFunction(MF, false); }
         };
     }
 
@@ -72,6 +74,7 @@ public:
 
         switch (architecture) {
             case Triple::x86_64:
+                index = std::rand() % options_amd64.size();
                 modified = options_amd64[index](MF, true) || modified;
                 break;
             case Triple::aarch64:
